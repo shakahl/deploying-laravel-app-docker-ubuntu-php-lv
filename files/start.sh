@@ -71,6 +71,29 @@ if [[ "${PHP_OPCACHE_PRELOAD_FILE}" != "" ]]; then
     /etc/php/"${PHP_VERSION}"/fpm/php.ini
 fi
 
+sed -Ei \
+  -e "s/error_log = .*/error_log = syslog/" \
+  -e "s/.*syslog\.ident = .*/syslog.ident = php-fpm/" \
+  -e "s/.*log_buffering = .*/log_buffering = yes/" \
+  /etc/php/${PHP_VERSION}/fpm/php-fpm.conf
+echo "request_terminate_timeout = 600" >> /etc/php/${PHP_VERSION}/fpm/php-fpm.conf
+
+sed -Ei \
+  -e "s/^user = .*/user = www-data/" \
+  -e "s/^group = .*/group = www-data/" \
+  -e 's/listen\.owner.*/listen.owner = www-data/' \
+  -e 's/listen\.group.*/listen.group = www-data/' \
+  -e 's/.*listen\.backlog.*/listen.backlog = 65536/' \
+  -e "s/pm\.max_children = .*/pm.max_children = 32/" \
+  -e "s/pm\.start_servers = .*/pm.start_servers = 4/" \
+  -e "s/pm\.min_spare_servers = .*/pm.min_spare_servers = 4/" \
+  -e "s/pm\.max_spare_servers = .*/pm.max_spare_servers = 16/" \
+  -e "s/.*pm\.max_requests = .*/pm.max_requests = 0/" \
+  -e "s/.*pm\.status_path = .*/pm.status_path = \/fpm-status/" \
+  -e "s/.*ping\.path = .*/ping.path = \/fpm-ping/" \
+  -e 's/\/run\/php\/.*fpm.sock/\/run\/php\/fpm.sock/' \
+  /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
+
 cp /supervisord_base.conf /supervisord.conf
 
 if [[ "${ENABLE_HORIZON}" = "TRUE" ]]; then
