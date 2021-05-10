@@ -41,6 +41,11 @@ export PHP_OPCACHE_PRELOAD_FILE=${PHP_OPCACHE_PRELOAD_FILE:-""}
 
 export COMPOSER_PROCESS_TIMEOUT=${COMPOSER_PROCESS_TIMEOUT:-2000}
 
+
+# Make sure files are owned correctly
+chown www-data: /var/www
+find /var/www -not -user www-data -execdir chown "www-data" {} \+
+
 sed -i \
   -e "s@date.timezone =.*@date.timezone = ${PHP_TIMEZONE}@" \
   -e "s/upload_max_filesize = .*/upload_max_filesize = ${PHP_UPLOAD_MAX_FILESIZE}/" \
@@ -144,6 +149,7 @@ if [[ -e "${INITIALISE_FILE}" ]]; then
   chmod u+x "${INITIALISE_FILE}"
   mkdir /root/.composer /var/www/.composer
   chmod a+r /root/.composer /var/www/.composer
+  chown -R www-data: /var/www/.composer
   su www-data --preserve-environment -c "${INITIALISE_FILE}" >> /var/log/initialise.log
 fi
 
