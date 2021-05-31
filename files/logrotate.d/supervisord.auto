@@ -1,6 +1,6 @@
-site/logs/supervisor/*.log {
+/var/log/supervisor/*.log {
   daily
-  rotate 60
+  rotate 7
   copytruncate
   compress
   missingok

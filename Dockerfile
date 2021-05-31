@@ -42,7 +42,6 @@ RUN apt update && \
         mysql-client \
         openssl \
         postgresql-client procps psmisc \
-        rsyslog \
         software-properties-common ssl-cert sudo supervisor \
         tar \
         unzip \
@@ -54,6 +53,22 @@ RUN apt update && \
     rm -rf /var/lib/apt/lists/* && \
     rm -rf /var/tmp/* && \
     rm -rf /tmp/*
+
+RUN add-apt-repository -y ppa:adiscon/v8-devel && \
+    apt update && \
+    apt -y  \
+        dist-upgrade \
+        && \
+    apt-get install -qy \
+        rsyslog rsyslog-omstdout \
+        && \
+    apt-get -y autoremove && \
+    apt-get -y clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    rm -rf /var/tmp/* && \
+    rm -rf /tmp/*
+
+ADD ./files/rsyslog.d/60-stdout.conf /etc/rsyslog.d/60-stdout.conf
 
 ## Install PHP disable xdebug
 RUN add-apt-repository -y ppa:ondrej/php && \
