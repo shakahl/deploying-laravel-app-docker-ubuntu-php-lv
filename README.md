@@ -1,5 +1,5 @@
-# Stage3 Docker Ubuntu PHP Laravel
+# Deploying Laravel Aapp Ubuntu Php LV Docker
 
-Images created for stage 3 examples for
+Used to create base image for running the laravel app
 
-https://github.com/haakco/the-different-stages-to-learning-how-to-deploy-a-laravel-application
+https://github.com/haakco/deploying-laravel-app
