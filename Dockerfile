@@ -62,6 +62,12 @@ RUN add-apt-repository -y ppa:adiscon/v8-devel && \
     apt-get install -qy \
         rsyslog rsyslog-omstdout \
         && \
+    sed -i -E \
+      -e '/imklog/s/^/#/' \
+      -e 's/\$PrivDrop/#\$PrivDrop/' \
+      /etc/rsyslog.conf && \
+    chgrp -R syslog /var/log && \
+    chmod -R 0770 /var/log && \
     apt-get -y autoremove && \
     apt-get -y clean && \
     rm -rf /var/lib/apt/lists/* && \
