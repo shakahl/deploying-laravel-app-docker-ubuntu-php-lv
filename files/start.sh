@@ -61,6 +61,7 @@ sed -i \
   -e "s/opcache.enable_file_override=.*/opcache.enable_file_override=${PHP_OPCACHE_ENABLE_FILE_OVERRIDE}/" \
   -e "s/opcache.validate_timestamps=.*/opcache.validate_timestamps=${PHP_OPCACHE_VALIDATE_TIMESTAMPS}/" \
   -e "s/opcache.revalidate_freq=.*/opcache.revalidate_freq=${PHP_OPCACHE_REVALIDATE_FREQ}/" \
+  -e "s/;error_log = syslog/error_log = syslog/" \
   /etc/php/"${PHP_VERSION}"/cli/php.ini \
   /etc/php/"${PHP_VERSION}"/fpm/php.ini
 
@@ -135,7 +136,7 @@ chmod 600 /root/.ssh/authorized_keys
 
 cat > ${TEMP_CRON_FILE} <<- EndOfMessage
 # m h  dom mon dow   command
-10 * * * * /usr/sbin/logrotate -vf /etc/logrotate.conf 2>&1 | /dev/stdout
+10 * * * * cd /var/log;/usr/sbin/logrotate -vf /etc/logrotate.conf 2>&1 | /dev/stdout
 
 #rename on start
 @reboot find /var/www -not -user www-data -execdir chown "www-data:" {} \+ | /dev/stdout
