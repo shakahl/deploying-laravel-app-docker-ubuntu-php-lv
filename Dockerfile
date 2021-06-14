@@ -197,6 +197,7 @@ ENV PHP_TIMEZONE="UTC" \
 ENV PHP_OPCACHE_PRELOAD_FILE="" \
     COMPOSER_PROCESS_TIMEOUT=2000
 
+# Script that are used to setup the container
 ADD ./files/initialise.sh /var/www/initialise.sh
 ADD ./files/start.sh /start.sh
 ADD ./files/supervisord_base.conf /supervisord_base.conf

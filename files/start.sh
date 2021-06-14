@@ -65,13 +65,6 @@ sed -i \
   /etc/php/"${PHP_VERSION}"/cli/php.ini \
   /etc/php/"${PHP_VERSION}"/fpm/php.ini
 
-if [[ "${PHP_OPCACHE_PRELOAD_FILE}" != "" ]]; then
-  sed -i \
-    -e "s#;opcache.preload=.*#opcache.preload=${PHP_OPCACHE_PRELOAD_FILE}#" \
-    -e "s#;opcache.preload_user=.*#opcache.preload_user=www-data#" \
-    /etc/php/"${PHP_VERSION}"/fpm/php.ini
-fi
-
 sed -Ei \
   -e "s/error_log = .*/error_log = syslog/" \
   -e "s/.*syslog\.ident = .*/syslog.ident = php-fpm/" \
@@ -94,6 +87,13 @@ sed -Ei \
   -e "s/.*ping\.path = .*/ping.path = \/fpm-ping/" \
   -e 's/\/run\/php\/.*fpm.sock/\/run\/php\/fpm.sock/' \
   /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
+
+if [[ "${PHP_OPCACHE_PRELOAD_FILE}" != "" ]]; then
+  sed -i \
+    -e "s#;opcache.preload=.*#opcache.preload=${PHP_OPCACHE_PRELOAD_FILE}#" \
+    -e "s#;opcache.preload_user=.*#opcache.preload_user=www-data#" \
+    /etc/php/"${PHP_VERSION}"/fpm/php.ini
+fi
 
 cp /supervisord_base.conf /supervisord.conf
 
