@@ -4,8 +4,7 @@ Used to create base image for running the laravel app
 
 https://github.com/haakco/deploying-laravel-app
 
-
-## Base PHP Docker Image
+## Description
 
 We are going to start by creating a base image for PHP.
 
@@ -14,18 +13,18 @@ This image will hold everything required except the Laravel code.
 The image will also have NGINX built in to make our lives simpler.
 
 To make logging simpler we'll try to send all logs to syslog. We'll then use syslog to send to stdout and stderr.
-This way you can get all logs by getting the container logs.
 
-For deployment, we'll build a second image based on the first image just adding our Laravel code.
+This makes it simpler to get logs.
 
-We split the images to save us time rebuilding the whole image every time we do a code change.
+You would then either look at the running container logs or pipe these logs to something like the ELK stack.
 
-The final docker file and anything needed to build it can be found
-at [https://github.com/haakco/deploying-laravel-app-docker-ubuntu-php-lv](https://github.com/haakco/deploying-laravel-app-docker-ubuntu-php-lv)
+This image doesn't contain any Laravel code.
 
-I've put it in its own git repository to make things simpler, and so we can use the same image in stage 5.
+This is to save time rebuilding the whole image every time we do a code change.
 
 Bellow is the top of our Docker file where we set these.
+
+## Base PHP Docker Image
 
 ```dockerfile
 ARG BASE_UBUNTU_VERSION='ubuntu:20.04'
