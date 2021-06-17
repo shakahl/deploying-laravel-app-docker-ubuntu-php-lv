@@ -12,11 +12,13 @@ This image will hold everything required except the Laravel code.
 
 The image will also have NGINX built in to make our lives simpler.
 
-To make logging simpler we'll try to send all logs to syslog. We'll then use syslog to send to stdout and stderr.
+To make logging simpler we'll try to send all logs to syslog. We'll then use syslog to send to
+stdout and stderr.
 
 This makes it simpler to get logs.
 
-You would then either look at the running container logs or pipe these logs to something like the ELK stack.
+You would then either look at the running container logs or pipe these logs to something like the
+ELK stack.
 
 This image doesn't contain any Laravel code.
 
@@ -50,20 +52,24 @@ To make future upgrading easier, there are variables for PHP and Ubuntu versions
 
 After this, we follow a similar process to the previous stages.
 
-I'm mainly following the installation script we used in Stage 1. (Remember how I said you'd be re-using this)
+I'm mainly following the installation script we used in Stage 1. (Remember how I said you'd be
+re-using this)
 
-For reference the installation script is here [https://github.com/haakco/deploying-laravel-app-stage1-simple-deploy/blob/main/setupCommands.sh](https://github.com/haakco/deploying-laravel-app-stage1-simple-deploy/blob/main/setupCommands.sh).
+For reference the installation script is
+here [https://github.com/haakco/deploying-laravel-app-stage1-simple-deploy/blob/main/setupCommands.sh](https://github.com/haakco/deploying-laravel-app-stage1-simple-deploy/blob/main/setupCommands.sh)
+.
 
-The one exception is we don't have to generate the SSL certificate, as we'll do that with a proxy that we'll run in
-front of the server.
+The one exception is we don't have to generate the SSL certificate, as we'll do that with a proxy
+that we'll run in front of the server.
 
 We'll set some flags to speed up the apt install.
 
 First make sure the Ubuntu is entirely up to date.
 
-We also install some packages to make our lives easier if we want to test anything. e.g., Ping and database clients.
+We also install some packages to make our lives easier if we want to test anything. e.g., Ping and
+database clients.
 
-[SupervisorD](http://supervisord.org/) is added  to run our services on start. It will also handle
+[SupervisorD](http://supervisord.org/) is added to run our services on start. It will also handle
 restarting them if they crash.
 
 You'll see after each run command, we do a cleanup to keep each layer as small as possible.
@@ -101,8 +107,8 @@ RUN apt update && \
     rm -rf /tmp/*
 ```
 
-Next, we want to install PHP. We also install xdebug but disable it. The config for xdebug is updated to allow for
-remote debugging.
+Next, we want to install PHP. We also install xdebug but disable it. The config for xdebug is
+updated to allow for remote debugging.
 
 When needed xdebug can be enabled. This is handled via environmental variables in the run script.
 
@@ -162,11 +168,13 @@ RUN add-apt-repository -y ppa:nginx/stable && \
 
 To configure Nginx the way we want we'll copy the config files we want into the image.
 
-For this, we'll create a ```files``` subdirectory directory and add the config files for Nginx in a subdirectory.
+For this, we'll create a ```files``` subdirectory directory and add the config files for Nginx in a
+subdirectory.
 
 [https://github.com/haakco/deploying-laravel-app-docker-ubuntu-php-lv/tree/main/files/nginx_config](https://github.com/haakco/deploying-laravel-app-docker-ubuntu-php-lv/tree/main/files/nginx_config)
 
-We also make sure that the Nginx is not running in daemon mode. This lets SupervisorD control when it starts or stops.
+We also make sure that the Nginx is not running in daemon mode. This lets SupervisorD control when
+it starts or stops.
 
 Please go over the config files to see how things are set up.
 
@@ -184,7 +192,8 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" &&
     php -r "unlink('composer-setup.php');"
 ```
 
-To allow for some simpler debugging, we are going to add ssh. This allows using tools like Tinkerwell for simpler debugging.
+To allow for some simpler debugging, we are going to add ssh. This allows using tools like
+Tinkerwell for simpler debugging.
 
 ```dockerfile
 # Add openssh
@@ -238,7 +247,8 @@ RUN echo 'PATH="/usr/bin:/var/www/site/vendor/bin:/var/www/site/vendor/bin:/site
     mkdir -p /var/www/site/tmp
 ```
 
-Next we add a configuration for log rotate. This prevents any log files in the running container from growing to large.
+Next we add a configuration for log rotate. This prevents any log files in the running container
+from growing to large.
 
 We also add a scrip that will pass all the environmental variable to any scripts we want to run.
 
@@ -247,8 +257,8 @@ ADD ./files/logrotate.d/ /etc/logrotate.d/
 ADD ./files/run_with_env.sh /bin/run_with_env.sh
 ```
 
-To make the resulting image file more flexible we use environmental variables to change some settings in
-the ```start.sh``` script.
+To make the resulting image file more flexible we use environmental variables to change some
+settings in the ```start.sh``` script.
 (I'll cover the  ```start.sh``` once we've covered everything in the Dockerfile)
 
 We set the default values for these next.
@@ -346,11 +356,13 @@ mkdir -p /var/log/supervisor
 mkdir -p /run/php
 ```
 
-Next we set up some default environmental variables. You'll see these are a repeat of the ones in our Dockerfile.
+Next we set up some default environmental variables. You'll see these are a repeat of the ones in
+our Dockerfile.
 
 You'll also see that if they any previously set enviroment variable values take preference.
 
-This allows us to change how the container is configured and what will run by just altering the variables.
+This allows us to change how the container is configured and what will run by just altering the
+variables.
 
 ```shell
 ## All the following setting can be overwritten by passing environmental variables on the docker run
@@ -481,7 +493,8 @@ fi
 sed -E -i -e "s/PHP_VERSION/${PHP_VERSION}/g" /supervisord.conf
 ```
 
-When enabling the ssh server there is also the option to add your ssh key via an environmental variable.
+When enabling the ssh server there is also the option to add your ssh key via an environmental
+variable.
 
 ```shell
 mkdir -p /root/.ssh/
@@ -537,10 +550,12 @@ fi
 
 By default, you can set the environmental variables for laravel directly.
 
-Or if you would like to generate a ```.env``` file you can pass them prefixed with ```LVENV_``` and set ```GEN_LV_ENV```
+Or if you would like to generate a ```.env``` file you can pass them prefixed with ```LVENV_``` and
+set ```GEN_LV_ENV```
 to ```TRUE```.
 
-The main advantage is it makes it simpler to see what the settings are by looking at the ```.env``` file.
+The main advantage is it makes it simpler to see what the settings are by looking at the ```.env```
+file.
 
 ```shell
 if [[ "${GEN_LV_ENV}" = "TRUE" ]]; then
@@ -548,7 +563,8 @@ if [[ "${GEN_LV_ENV}" = "TRUE" ]]; then
 fi
 ```
 
-Next we override composers timeout. This is need if you are far from the composer servers. e.g. in Africa.
+Next we override composers timeout. This is need if you are far from the composer servers. e.g. in
+Africa.
 
 ```shell
 composer config --global process-timeout "${COMPOSER_PROCESS_TIMEOUT}"
@@ -563,7 +579,8 @@ chmod -R a+w /dev/stderr
 chmod -R a+w /dev/stdin
 ```
 
-We allow you to pass your own initialise file. This let you create a script that will do what ever setup you want before the server is up.
+We allow you to pass your own initialise file. This let you create a script that will do what ever
+setup you want before the server is up.
 
 It generally will have things like composer install.
 
@@ -587,9 +604,11 @@ Finally, we do a quick logrotate just in case and start supervisor.
 ```
 
 ### Simple local dev enviroment
+
 Ok in this step we are going to set up a local dev enviroment using the php image we created above.
 
-We'll also spin up a Redis and MySQL. Though for those we'll use the default images on [docker hub](https://hub.docker.com/).
+We'll also spin up a Redis and MySQL. Though for those we'll use the default images
+on [docker hub](https://hub.docker.com/).
 
 I'm going to first show you how to do this via the command line.
 
