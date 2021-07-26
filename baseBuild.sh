@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 export PHP_VERSION="${PHP_VERSION:-7.4}"
 export BASE_UBUNTU_VERSION="${BASE_UBUNTU_VERSION:-ubuntu:20.04}"
-IMAGE_NAME_DEFAULT="haakco/docker-deploying-laravel-app-${BASE_UBUNTU_VERSION}-php${PHP_VERSION}-lv"
+IMAGE_NAME_DEFAULT="haakco/deploying-laravel-app-${BASE_UBUNTU_VERSION}-php${PHP_VERSION}-lv"
 IMAGE_NAME_DEFAULT="${IMAGE_NAME_DEFAULT//:/-}"
 export IMAGE_NAME="${IMAGE_NAME:-${IMAGE_NAME_DEFAULT}}"
+export DOCKER_BUILDKIT=1
 
 echo "Building From: ${BASE_UBUNTU_VERSION}"
 echo "Building PHP: ${PHP_VERSION}"
