@@ -3,7 +3,7 @@ name: Publish X64 haakco/deploying-laravel-app-ubuntu-20.04-php7.4-lv Docker ima
 on:
   push:
     branches:
-      - master
+      - main
   workflow_dispatch:
   schedule:
     - cron: '30 04 * * 4'
